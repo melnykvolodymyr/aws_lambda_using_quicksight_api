@@ -1,0 +1,377 @@
+{
+  "dataSources": [
+    {
+      "dataSource": "ATHENA",
+      "name": "ATHENA_Test10",
+      "WorkGroup": "a",
+      "RoleArn": ""
+    },
+    {
+      "dataSource": "AURORA",
+      "name": "Aurora_Test10",
+      "host": "datatypesmysql.ci7hb3pawv1y.us-west-2.rds.amazonaws.com",
+      "port": "8192",
+      "database": "simpledb",
+      "secretManagerArn": "arn:aws:secretsmanager:us-west-2:190600982480:secret:auroracreds-pam02f"
+    },
+    {
+      "dataSource": "AURORA_POSTGRESQL",
+      "name": "Aurora_PGSQL_Test10",
+      "host": "datatypesaurorapg.cluster-ci7hb3pawv1y.us-west-2.rds.amazonaws.com",
+      "port": "8192",
+      "database": "simpledb",
+      "secretManagerArn": "arn:aws:secretsmanager:us-west-2:190600982480:secret:aurorapgcreds-k2nJkD"
+    },
+    {
+      "dataSource": "MARIADB",
+      "name": "MariaDb_Test10",
+      "host": "datatypesmariadb.ci7hb3pawv1y.us-west-2.rds.amazonaws.com",
+      "port": "8192",
+      "database": "simpledb",
+      "secretManagerArn": "arn:aws:secretsmanager:us-west-2:190600982480:secret:mariadbcreds-hMpzVO"
+    },
+    {
+      "dataSource": "MYSQL",
+      "name": "MySQL_Test10",
+      "host": "datatypesmysql.ci7hb3pawv1y.us-west-2.rds.amazonaws.com",
+      "port": "8192",
+      "database": "simpledb",
+      "secretManagerArn": "arn:aws:secretsmanager:us-west-2:190600982480:secret:mysqlcreds-KTixex"
+    },
+    {
+      "dataSource": "POSTGRESQL",
+      "name": "PGSQL_Test10",
+      "host": "datatypespostgres.ci7hb3pawv1y.us-west-2.rds.amazonaws.com",
+      "port": "8192",
+      "database": "simpledb",
+      "secretManagerArn": "arn:aws:secretsmanager:us-west-2:190600982480:secret:postgrescreds-6Wp1Ub"
+    },
+    {
+      "dataSource": "PRESTO",
+      "name": "Presto_Test10",
+      "host": "ec2-54-201-209-153.us-west-2.compute.amazonaws.com",
+      "port": "8192",
+      "catalog": "mysql",
+      "secretManagerArn": "arn:aws:secretsmanager:us-west-2:190600982480:secret:prestocreds-D5evBz"
+    },
+    {
+      "dataSource": "REDSHIFT",
+      "name": "Redshift_Test10",
+      "sourceType": "sqlTable",
+      "type": "BASIC",
+      "table": "Calendar",
+      "host": "sn-cluster.cgrx6apbwwkj.us-west-2.redshift.amazonaws.com",
+      "port": "8192",
+      "database": "quantum",
+      "userName": "",
+      "password": "",
+      "secretManagerArn": "arn:aws:secretsmanager:us-west-2:190600982480:secret:redshiftcreds-GgHC5O"
+    },
+    {
+      "dataSource": "SNOWFLAKE",
+      "name": "Snowflake_Test10",
+      "host": "quicksightpartner.snowflakecomputing.com",
+      "port": "443",
+      "database": "DEMO_DB",
+      "warehouse": "DEMO_WH",
+      "secretManagerArn": "arn:aws:secretsmanager:us-west-2:190600982480:secret:snowflakecreds-HEvvTZ"
+    },
+    {
+      "dataSource": "SQLSERVER",
+      "name": "SQLServer_Test10",
+      "host": "datatypessqlsrv.ci7hb3pawv1y.us-west-2.rds.amazonaws.com",
+      "port": "8192",
+      "database": "simpledb",
+      "secretManagerArn": "arn:aws:secretsmanager:us-west-2:190600982480:secret:sqlserverCreds-EB4qJr"
+    },
+    {
+      "dataSource": "TERADATA",
+      "name": "Teradata_Test10",
+      "host": "teradata-46025544.us-west-2.elb.amazonaws.com",
+      "port": "5432",
+      "database": "integ",
+      "secretManagerArn": "arn:aws:secretsmanager:us-west-2:190600982480:secret:teradatacreds-zN3k2b"
+    }
+  ],
+  "dataSets": [
+    {
+      "name": "ATHENA_BASIC",
+      "sourceName": "ATHENA_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "BASIC",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Aurora_BASIC",
+      "sourceName": "Aurora_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "BASIC",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Aurora_PGSQL_BASIC",
+      "sourceName": "Aurora_PGSQL_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "BASIC",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MariaDb_BASIC",
+      "sourceName": "MariaDb_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "BASIC",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MySQL_BASIC",
+      "sourceName": "MySQL_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "BASIC",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MySQL_CUSTOM_SQL",
+      "sourceName": "MySQL_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "CUSTOM_SQL",
+          "query": "select year, quarter, month, day_of_month, day_of_week, fl_date, origin_city_name, dest_city_name from simpledb.all_flights where origin_state_abr = 'GA'",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MySQL_JOIN",
+      "sourceName": "MySQL_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "JOIN",
+          "columns": [
+            {
+              "Name": "fl_num",
+              "Type": "STRING"
+            }
+          ]
+        },
+        {
+          "name": "simpledatatypes",
+          "alias": "simpleDataTypes",
+          "type": "JOIN",
+          "columns": [
+            {
+              "Name": "integer_column",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ],
+      "joinInstruction": {
+        "tableName": "joinResult",
+        "alias": "joinResult",
+        "leftOperand": "allFlights",
+        "rightOperand": "simpleDataTypes",
+        "type": "INNER",
+        "onClause": "fl_num = integer_column"
+      }
+    },
+    {
+      "name": "PGSQL_BASIC",
+      "sourceName": "PGSQL_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "BASIC",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Presto_BASIC",
+      "sourceName": "Presto_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "BASIC",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Redshift_BASIC",
+      "sourceName": "Redshift_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "BASIC",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Redshift_CUSTOM_SQL",
+      "sourceName": "Redshift_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "CUSTOM_SQL",
+          "query": "select year, quarter, month, day_of_month, day_of_week, fl_date, origin_city_name, dest_city_name from simpledb.all_flights where origin_state_abr = 'GA'",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Redshift_JOIN",
+      "sourceName": "Redshift_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "JOIN",
+          "columns": [
+            {
+              "Name": "fl_num",
+              "Type": "STRING"
+            }
+          ]
+        },
+        {
+          "name": "zip_codes_snapi",
+          "alias": "zipCodesSnapi",
+          "type": "JOIN",
+          "columns": [
+            {
+              "Name": "random",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ],
+      "joinInstruction": {
+        "tableName": "joinResult",
+        "alias": "joinResult",
+        "leftOperand": "allFlights",
+        "rightOperand": "zipCodesSnapi",
+        "type": "INNER",
+        "onClause": "fl_num = random"
+      }
+    },
+    {
+      "name": "Snowflake_BASIC",
+      "sourceName": "Snowflake_Test10",
+      "tables": [
+        {
+          "name": "ALL_FLIGHTS_SNAPI",
+          "alias": "allFlightsSnapi",
+          "schema": "PUBLIC",
+          "type": "BASIC",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SQLServer_BASIC",
+      "sourceName": "SQLServer_Test10",
+      "tables": [
+        {
+          "name": "all_flights",
+          "alias": "allFlights",
+          "type": "BASIC",
+          "columns": [
+            {
+              "Name": "year",
+              "Type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
