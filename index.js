@@ -13,6 +13,8 @@ AWS.config.apiVersions = {
   dynamodb: "2012-08-10",
 };
 
+AWS.config.update({ region: "us-west-2" });
+
 const data = fs.readFileSync("./required_datasets_bkup.json");
 var sources = JSON.parse(data);
 var { dataSources, dataSets } = sources;
@@ -43,50 +45,60 @@ exports.handler = async (event, context, cal) => {
     }
 
     //////////////////////////////////////// Delete All Data Sources ////////////////////////////////////
-    
-    await deleteAllDataSources(accountId);
-    await deleteAllDataSets(accountId);
 
-    //////////////////////////////////////// Create Data Sources ////////////////////////////////////
-    // for (let source of dataSources) {
-    //   try {
-    //     secretString = '';
-    //     if (source.secretManagerArn) {
-    //       secretString = await getSecretString(source.secretManagerArn);
-    //     }
-    //     await createDataSource(quicksight, source, accountId, context);
-    //     // await writeMetadataToDDB(source, context, context);
-    //     // if (source.type === 'INCREMENTAL_REFRESH') {
-    //     //   await putDataSetProperties(quicksight, accountId, source, context);
-    //     // }
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // }
+    // await deleteAllDataSources(accountId);
+    // await deleteAllDataSets(accountId);
 
-    //////////////////////////////////////// Create Data Sets //////////////////////////////////////
-    // for (let dataSet of dataSets) {
-    //   try {
-    //     let dataSetId = await createDataSet(quicksight, dataSet, accountId, context);
-        
-    //     if(dataSetId !== "exist") {
-    //       let ingStatus = await createIngestion(quicksight, dataSetId, accountId, context);
-    //       console.log("Ingestion status: ", ingStatus);
-    //     }
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // }
+    ////////////////////////////////////// Create Data Sources ////////////////////////////////////
+    for (let source of dataSources) {
+      try {
+        secretString = "";
+        if (source.secretManagerArn) {
+          secretString = await getSecretString(source.secretManagerArn);
+        }
+        await createDataSource(quicksight, source, accountId, context);
+        await writeMetadataToDDB(source, context, context);
+        // if (source.type === 'INCREMENTAL_REFRESH') {
+        //   await putDataSetProperties(quicksight, accountId, source, context);
+        // }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    ////////////////////////////////////// Create Data Sets //////////////////////////////////////
+    for (let dataSet of dataSets) {
+      try {
+        let dataSetId = await createDataSet(
+          quicksight,
+          dataSet,
+          accountId,
+          context
+        );
+
+        if (dataSetId !== "exist") {
+          let ingStatus = await createIngestion(
+            quicksight,
+            dataSetId,
+            accountId,
+            context
+          );
+          console.log("Ingestion status: ", ingStatus);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
   } catch (err) {
     console.log(err);
   }
 };
 
-const deleteDataSource = (accountId, dataSourceId) => {
+const deleteDataSource = async (accountId, dataSourceId) => {
   const params = {
     AwsAccountId: accountId,
-    DataSourceId: dataSourceId
-  }
+    DataSourceId: dataSourceId,
+  };
   return new Promise((res, rej) => {
     quicksight.deleteDataSource(params, (err, data) => {
       if (err) {
@@ -96,15 +108,14 @@ const deleteDataSource = (accountId, dataSourceId) => {
         console.log("data source was deleted: " + dataSourceId);
         res();
       }
-    })
-  })
-}
+    });
+  });
+};
 
-const getDataSourceList = (accountId) => {
-
+const getDataSourceList = async (accountId) => {
   const params = {
-    AwsAccountId: accountId
-  }
+    AwsAccountId: accountId,
+  };
 
   return new Promise((res, rej) => {
     quicksight.listDataSources(params, (err, data) => {
@@ -112,29 +123,29 @@ const getDataSourceList = (accountId) => {
         console.log("Error: ", err.message);
         rej();
       } else {
-        console.log('Get dataset list succeeded');
+        console.log("Get dataset list succeeded");
         res(data.DataSources);
       }
     });
   });
-}
+};
 
 const deleteAllDataSources = async (accountId) => {
   const dataSouces = await getDataSourceList(accountId);
   if (dataSouces.length == 0) {
-    console.log('There is not data set');
+    console.log("There is not data set");
     return;
   }
-  for(let source of dataSouces) {
+  for (let source of dataSouces) {
     await deleteDataSource(accountId, source.DataSourceId);
   }
-}
+};
 
-const deleteDataSet = (accountId, dataSetId) => {
+const deleteDataSet = async (accountId, dataSetId) => {
   const params = {
     AwsAccountId: accountId,
-    DataSetId: dataSetId
-  }
+    DataSetId: dataSetId,
+  };
   return new Promise((res, rej) => {
     quicksight.deleteDataSet(params, (err, data) => {
       if (err) {
@@ -144,15 +155,14 @@ const deleteDataSet = (accountId, dataSetId) => {
         console.log("data set was deleted: " + dataSetId);
         res();
       }
-    })
-  })
-}
+    });
+  });
+};
 
-const getDataSetList = (accountId) => {
-
+const getDataSetList = async (accountId) => {
   const params = {
-    AwsAccountId: accountId
-  }
+    AwsAccountId: accountId,
+  };
 
   return new Promise((res, rej) => {
     quicksight.listDataSets(params, (err, data) => {
@@ -160,25 +170,31 @@ const getDataSetList = (accountId) => {
         console.log("Error: ", err.message);
         rej();
       } else {
-        console.log('Get dataset list succeeded');
+        console.log("Get dataset list succeeded");
         res(data.DataSetSummaries);
       }
     });
   });
-}
+};
 
 const deleteAllDataSets = async (accountId) => {
-  const dataSets = await getDataSetList (accountId);
+  const dataSets = await getDataSetList(accountId);
   if (dataSets.length == 0) {
-    console.log('There is not data set');
+    console.log("There is not data set");
     return;
   }
-  for(let source of dataSets) {
+  for (let source of dataSets) {
     await deleteDataSet(accountId, source.DataSetId);
   }
-}
+};
 
-const createDataSource = (quicksight, source, accountId, context, cal) => {
+const createDataSource = async (
+  quicksight,
+  source,
+  accountId,
+  context,
+  cal
+) => {
   var params = {};
   var dataSourceId = source.name.replace(/ /g, "-");
   var srcName = `${dataSourceId}${dataVersion}`;
@@ -228,23 +244,27 @@ const createDataSource = (quicksight, source, accountId, context, cal) => {
           rej();
         }
       } else {
-        console.log(
-          `Created data source ${srcName} with ID ${srcName}`
-        );
+        console.log(`Created data source ${srcName} with ID ${srcName}`);
         res();
       }
     });
   });
 };
 
-const createIngestion = (quicksight, dataSetId, accountId, context, val) => {
+const createIngestion = async (
+  quicksight,
+  dataSetId,
+  accountId,
+  context,
+  val
+) => {
   console.log("Creating ingestion...");
   const params = {
     AwsAccountId: accountId,
     DataSetId: dataSetId,
     IngestionId: `ingestion-id-${dataSetId}`,
-    IngestionType: 'FULL_REFRESH'
-  }
+    IngestionType: "FULL_REFRESH",
+  };
   return new Promise((res, rej) => {
     quicksight.createIngestion(params, (err, data) => {
       if (err) {
@@ -261,9 +281,9 @@ const createIngestion = (quicksight, dataSetId, accountId, context, val) => {
       }
     });
   });
-}
+};
 
-const createDataSet = (quicksight, source, accountId, context, cal) => {
+const createDataSet = async (quicksight, source, accountId, context, cal) => {
   const timeString = Date.now().toString();
   const dataSetId = `${source.name}${dataVersion}`;
   const params = {
@@ -274,7 +294,6 @@ const createDataSet = (quicksight, source, accountId, context, cal) => {
     PhysicalTableMap: getPhysicalTableMap(source, accountId),
     LogicalTableMap: getLogicalTableMap(source, accountId),
   };
-
 
   params.Permissions = [
     {
@@ -293,7 +312,7 @@ const createDataSet = (quicksight, source, accountId, context, cal) => {
       ],
     },
   ];
-  
+
   return new Promise((res, rej) => {
     quicksight.createDataSet(params, (err, data) => {
       if (err) {
@@ -334,11 +353,11 @@ const writeMetadataToDDB = (source, context, cal) => {
             {
               TableName: ddbTable,
               Item: {
-                dataSource: { S: source.name },
+                dataSource: { S: source.dataSource },
                 type: { S: source.dataSource },
-                description: { S: source.type },
+                description: { S: source.name },
                 pdsId: { S: "" },
-                sourceType: { S: source.sourceType },
+                sourceType: { S: source.dataSource },
               },
             },
             function (err, data) {
@@ -559,9 +578,9 @@ function getPhysicalTableMap(source, accountId) {
       newData["RelationalTable"] = {
         DataSourceArn: dataSourceArn,
         Name: name,
-        InputColumns: [...columns]
+        InputColumns: [...columns],
       };
-      if(schema) {
+      if (schema) {
         newData["RelationalTable"]["Schema"] = schema;
       }
     } else if (type == "CUSTOM_SQL") {
@@ -750,12 +769,12 @@ function putDataSetProperties(quicksight, accountId, source) {
   return new Promise((resolve, reject) => {
     quicksight.putDataSetRefreshProperties(params, (err, data) => {
       if (err) {
-        if (err.code === 'ResourceExistsException') {
-          console.warn('Warn:', err.message);
+        if (err.code === "ResourceExistsException") {
+          console.warn("Warn:", err.message);
           resolve();
         } else {
-          console.error('Error:', err.message);
-          reject('error while updating DataSetProperties');
+          console.error("Error:", err.message);
+          reject("error while updating DataSetProperties");
         }
       } else {
         console.log(`updated DataSetProperties`);
