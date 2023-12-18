@@ -6,7 +6,7 @@ var quicksight = getQuickSightClient(process.env.DOMAIN);
 const ddbTable = "canaryWorkflowTestData";
 const credsNotRequired = ["athena", "adobe", "s3"];
 
-const dataVersion = 1;
+const dataVersion = 4;
 
 AWS.config.apiVersions = {
   quicksight: "2018-04-01",
@@ -57,10 +57,9 @@ exports.handler = async (event, context, cal) => {
           secretString = await getSecretString(source.secretManagerArn);
         }
         await createDataSource(quicksight, source, accountId, context);
-        await writeMetadataToDDB(source, context, context);
-        // if (source.type === 'INCREMENTAL_REFRESH') {
-        //   await putDataSetProperties(quicksight, accountId, source, context);
-        // }
+        if (source.type === "INCREMENTAL_REFRESH") {
+          await putDataSetProperties(quicksight, accountId, context);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -75,6 +74,7 @@ exports.handler = async (event, context, cal) => {
           accountId,
           context
         );
+        await writeMetadataToDDB(dataSet, context, context);
 
         if (dataSetId !== "exist") {
           let ingStatus = await createIngestion(
@@ -336,7 +336,7 @@ const writeMetadataToDDB = (source, context, cal) => {
     TableName: ddbTable,
     Key: {
       dataSource: { S: source.name },
-      type: { S: source.dataSource },
+      type: { S: source.sourceName.split("_")[0] },
     },
   };
   return new Promise((res, rej) => {
@@ -353,11 +353,10 @@ const writeMetadataToDDB = (source, context, cal) => {
             {
               TableName: ddbTable,
               Item: {
-                dataSource: { S: source.dataSource },
-                type: { S: source.dataSource },
-                description: { S: source.name },
-                pdsId: { S: "" },
-                sourceType: { S: source.dataSource },
+                dataSource: { S: source.sourceName + dataVersion },
+                type: { S: source.name.split("_")[1] },
+                pdsId: { S: source.name + dataVersion },
+                dbType: { S: source.sourceName.split("_")[0] },
               },
             },
             function (err, data) {
@@ -749,10 +748,10 @@ function subscribeQuickSight(quicksight, accountId) {
   });
 }
 
-function putDataSetProperties(quicksight, accountId, source) {
+function putDataSetProperties(quicksight, accountId, datasetId) {
   var params = {
     AwsAccountId: accountId,
-    DataSetId: source.dataSetname,
+    DataSetId: datasetId,
     DataSetRefreshProperties: {
       RefreshConfiguration: {
         IncrementalRefresh: {
